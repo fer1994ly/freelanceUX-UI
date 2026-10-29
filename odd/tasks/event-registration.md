@@ -33,8 +33,8 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - RDD: on (global). Assess after each work-unit commit.
 
 ## Tasks
-- [ ] T1 Scaffold: Vite React TS, Vitest, Playwright (desktop + mobile projects), ESLint, netlify.toml, folder structure.
-- [ ] T2 Activities slice: Activity aggregate, create/list upcoming/get/duplicate use cases, localStorage repo. Unit + integration tests.
+- [x] T1 Scaffold: Vite React TS, Vitest, Playwright (desktop + mobile projects), ESLint, netlify.toml, folder structure.
+- [x] T2 Activities slice: Activity aggregate, create/list upcoming/get/duplicate use cases, localStorage repo. Unit + integration tests.
 - [ ] T3 Registrations slice: register (capacity invariant), waitlist, cancel, promote with 24 h offer, confirm offer, expiry cascade, Notifier outbox, cross-tab lock. Unit + integration tests (incl. concurrent last-seat).
 - [ ] T4 Attendance slice: QR token check-in single-use, manual toggle. Tests.
 - [ ] T5 Reporting: CSV export (registrants, waitlist, attendance). Tests.
@@ -55,7 +55,8 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - T1–T9: delegated direct (writer trigger: 2+ non-trivial files; one writer).
 
 ## Progress / Evidence
-_(updated per task)_
+- T1 (9c9a113): lint, tsc, build OK; npm test RED (4 files failed, modules missing) -> GREEN 6 tests. iPhone project runs on Chromium emulation (webkit not installed). Lint fix for playwright.config in next commit.
+- T2: RED (3 files failed) -> GREEN: 7 files, 24 tests; lint+tsc OK. Repos are async ports; VersionedCollection does optimistic versioning.
 
 ## Next step
 Delegate T1–T9 to one writer.
