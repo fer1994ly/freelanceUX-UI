@@ -94,3 +94,8 @@ Full branch (8133 lines) exceeded the reviewer context budget, so it was reviewe
 - [ ] F5 (SUGGESTION) The registration_closed check runs outside the lock; re-check it inside the mutation.
 - [ ] F6 (SUGGESTION) Only one retry on ConcurrencyError; readJson does not fall back on a stored null; vi.unstubAllGlobals belongs in afterEach; message bodies are untested (the QR text points at the cancel path?); an unhandled seed rejection; the form shows nothing when the registration view is missing.
 - Resolved in S3: S2 finding "register accepts cancelled/draft/past activities" (registration_closed guard added).
+
+### Review of follow-up fixes
+- S4 `18ba736..` (F1–F4 + LF normalization via .gitattributes; the writer had committed 8 files with CRLF): approved and acknowledged. Lineage review-aef0631d11cba16c.
+- [ ] F7 (SUGGESTION) Anchor the scanner dedupe window to check-in completion, not start (`CheckInTab.tsx:43`).
+- [ ] F8 (SUGGESTION) Restore the console.error spy in finally/afterEach (`registrationService.test.ts:153`).
