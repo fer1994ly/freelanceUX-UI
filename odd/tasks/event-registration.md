@@ -75,6 +75,8 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - T8 commit: bee8000.
 - T9: README.md + docs/GUIA-DE-USO.md written. Final verification: lint OK, tsc OK, npm test 18 files / 88 tests pass, build OK, test:e2e 18 passed.
 
+- Follow-ups F1-F4 (each RED observed first, then GREEN): F1 39a8dd3 (CheckInTab test: 3 failed -> 3 pass; in-flight guard + 3 s same-token dedupe, injectable Scanner/now); F2 ca87ea7 (3 failed -> pass; best-effort publish, ErrorReporter port, default console.error); F3 b8e9554 (1 failed -> pass; alert "No se pudo exportar el CSV. Intenta de nuevo."); F4 4ed4520 (tests added for navigator.locks delegation, fallback, key independence; they passed on first run, no bug found, so no RED). Final: lint OK, tsc OK, npm test 20 files / 98 tests, build OK, test:e2e 18 passed.
+
 ## Next step
 User review; decide on push/PR (no remote configured). Assess review risk per work-unit commit if RDD is on.
 
@@ -85,10 +87,10 @@ Full branch (8133 lines) exceeded the reviewer context budget, so it was reviewe
 - S3 `6062ecf..c25fd61` (UI, E2E, docs): approved. Lineage review-7a33a7980618c0f5.
 
 ### Advisory follow-ups (non-blocking)
-- [ ] F1 (WARNING) Camera scanner re-fires check-in on every frame, so a valid first scan shows "ya fue utilizado". Add an in-flight guard and last-token dedupe (`src/app/admin/CheckInTab.tsx`).
-- [ ] F2 (WARNING) The notifier failing after save surfaces an error even though the registration persisted (`registrationService.ts` publish-after-save).
-- [ ] F3 (WARNING) CSV export has no error handling and fails silently (`RegistrantsTab.tsx`).
-- [ ] F4 (WARNING) BrowserLockManager is untested (navigator.locks path and fallback); there is no test for different keys running concurrently.
+- [x] F1 (WARNING) Camera scanner re-fires check-in on every frame, so a valid first scan shows "ya fue utilizado". Add an in-flight guard and last-token dedupe (`src/app/admin/CheckInTab.tsx`).
+- [x] F2 (WARNING) The notifier failing after save surfaces an error even though the registration persisted (`registrationService.ts` publish-after-save).
+- [x] F3 (WARNING) CSV export has no error handling and fails silently (`RegistrantsTab.tsx`).
+- [x] F4 (WARNING) BrowserLockManager is untested (navigator.locks path and fallback); there is no test for different keys running concurrently.
 - [ ] F5 (SUGGESTION) The registration_closed check runs outside the lock; re-check it inside the mutation.
 - [ ] F6 (SUGGESTION) Only one retry on ConcurrencyError; readJson does not fall back on a stored null; vi.unstubAllGlobals belongs in afterEach; message bodies are untested (the QR text points at the cancel path?); an unhandled seed rejection; the form shows nothing when the registration view is missing.
 - Resolved in S3: S2 finding "register accepts cancelled/draft/past activities" (registration_closed guard added).
