@@ -6,9 +6,16 @@ import { LocalStorageActivityRepository } from '../../activities/infrastructure/
 import { LocalStorageBookRepository } from '../infrastructure/localStorageBookRepository'
 import { LocalStorageOutbox } from '../infrastructure/localStorageOutbox'
 import { RegistrationService } from './registrationService'
+import type { ErrorReporter, Notifier } from './ports'
 
 /** Test-only wiring of the registrations slice with in-process adapters. */
-export function makeHarness(opts: { capacity?: number; locks?: LockManager } = {}) {
+export function makeHarness(opts: {
+    capacity?: number
+    locks?: LockManager
+    /** Wraps the outbox, e.g. to inject delivery failures. */
+    wrapNotifier?: (outbox: Notifier) => Notifier
+    reporter?: ErrorReporter
+  } = {}) {
   const clock = new FakeClock('2026-11-01T10:00:00.000Z')
   const ids = new SequentialIds()
   const activities = new ActivityService(new LocalStorageActivityRepository(), ids, clock)
@@ -17,7 +24,8 @@ export function makeHarness(opts: { capacity?: number; locks?: LockManager } = {
     books: new LocalStorageBookRepository(),
     activities: new LocalStorageActivityRepository(),
     locks: opts.locks ?? new InMemoryLockManager(),
-    notifier: outbox,
+    notifier: opts.wrapNotifier ? opts.wrapNotifier(outbox) : outbox,
+    reporter: opts.reporter,
     clock,
     ids,
   })

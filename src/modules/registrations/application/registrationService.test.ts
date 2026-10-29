@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import type { Notifier } from './ports'
 import { NoLockManager } from '../../../shared/lock'
 import { makeHarness, person } from './testHarness'
 
@@ -113,5 +114,47 @@ describe('RegistrationService registration window', () => {
     h.clock.set('2026-11-01T10:00:00.000Z')
     await h.activities.update(a.id, { status: 'cancelled' })
     await expect(h.registrations.register(a.id, person(1))).rejects.toThrow(/registration_closed/)
+  })
+})
+
+describe('RegistrationService notification failures', () => {
+  const failing = (failOn: (kind: string) => boolean) => (outbox: Notifier): Notifier => ({
+    notify: async (n) => {
+      if (failOn(n.kind)) throw new Error('smtp down')
+      await outbox.notify(n)
+    },
+  })
+
+  it('register still succeeds and persists when the notifier fails; failure is reported', async () => {
+    const reporter = { report: vi.fn() }
+    const h = makeHarness({ reporter, wrapNotifier: failing(() => true) })
+    const a = await h.createActivity(2)
+    const out = await h.registrations.register(a.id, person(1))
+    expect(out.registration.status).toBe('confirmed')
+    expect((await h.registrations.listForActivity(a.id)).map((r) => r.status)).toEqual(['confirmed'])
+    expect(reporter.report).toHaveBeenCalledTimes(1)
+    expect(reporter.report.mock.calls[0][0]).toBeInstanceOf(Error)
+  })
+
+  it('cancel succeeds and the remaining messages are still delivered', async () => {
+    const reporter = { report: vi.fn() }
+    const h = makeHarness({ reporter, wrapNotifier: failing((k) => k === 'cancellation') })
+    const a = await h.createActivity(1)
+    const first = await h.registrations.register(a.id, person(1))
+    await h.registrations.register(a.id, person(2))
+    const cancelled = await h.registrations.cancel(first.registration.cancelToken)
+    expect(cancelled.status).toBe('cancelled')
+    expect((await h.registrations.listForActivity(a.id)).map((r) => r.status)).toEqual(['cancelled', 'offered'])
+    expect(h.outbox.list().map((m) => m.kind)).toEqual(['confirmation', 'waitlisted', 'seat-offered'])
+    expect(reporter.report).toHaveBeenCalledTimes(1)
+  })
+
+  it('defaults to console.error when no reporter is injected', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const h = makeHarness({ wrapNotifier: failing(() => true) })
+    const a = await h.createActivity(1)
+    await expect(h.registrations.register(a.id, person(1))).resolves.toBeDefined()
+    expect(spy).toHaveBeenCalled()
+    spy.mockRestore()
   })
 })

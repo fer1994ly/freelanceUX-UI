@@ -32,3 +32,8 @@ export interface OutboxMessage extends Notification {
 export interface Notifier {
   notify(notification: Notification): Promise<void>
 }
+
+/** Receives non-fatal failures (e.g. a notification that could not be delivered). */
+export interface ErrorReporter {
+  report(error: unknown, context: string): void
+}

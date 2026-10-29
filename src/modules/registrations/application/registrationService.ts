@@ -21,7 +21,7 @@ import type {
   RegistrationEvent,
 } from '../domain/registration'
 import { buildNotification } from './messages'
-import type { Notifier, NotificationKind, RegistrationBookRepository, TokenKind } from './ports'
+import type { ErrorReporter, Notifier, NotificationKind, RegistrationBookRepository, TokenKind } from './ports'
 
 export interface RegistrationServiceDeps {
   books: RegistrationBookRepository
@@ -30,6 +30,8 @@ export interface RegistrationServiceDeps {
   notifier: Notifier
   clock: Clock
   ids: IdGenerator
+  /** Receives notification delivery failures. Defaults to console.error. */
+  reporter?: ErrorReporter
 }
 
 export interface RegistrationView {
@@ -148,13 +150,26 @@ export class RegistrationService {
     })
   }
 
+  /** Best-effort: the book is already saved, so a delivery failure is reported, never thrown. */
   private async publish(events: RegistrationEvent[], book: RegistrationBook, activity: Activity) {
     for (const e of events) {
       const r = book.registrations.find((x) => x.id === e.registrationId)
       if (!r) continue
       const position = waitlistPosition(book, r.id)
-      await this.d.notifier.notify(buildNotification(NOTIFY[e.type], r, activity, position))
+      try {
+        await this.d.notifier.notify(buildNotification(NOTIFY[e.type], r, activity, position))
+      } catch (error) {
+        this.report(error, `notify:${e.type}:${r.id}`)
+      }
+    }
+  }
+
+  private report(error: unknown, context: string) {
+    try {
+      if (this.d.reporter) this.d.reporter.report(error, context)
+      else console.error(`[registrations] ${context}`, error)
+    } catch {
+      // reporting must never break the use case
     }
   }
 }
-
