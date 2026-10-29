@@ -55,13 +55,14 @@ export function ActivitiesTab() {
                 <td>{formatDateTime(a.startsAt)}</td>
                 <td>{a.capacity}</td>
                 <td>{STATUS[a.status]}</td>
-                <td className="row">
+                <td><div className="row">
                   <button className="btn small" onClick={() => setEditing(a)}>
                     Editar<span className="sr-only"> {a.title}</span>
                   </button>
                   <button className="btn small" onClick={() => duplicate(a)}>
                     Duplicar<span className="sr-only"> {a.title}</span>
                   </button>
+                </div>
                 </td>
               </tr>
             ))}

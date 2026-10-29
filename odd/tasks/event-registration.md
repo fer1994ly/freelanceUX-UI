@@ -40,7 +40,7 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - [x] T5 Reporting: CSV export (registrants, waitlist, attendance). Tests.
 - [x] T6 Surveys: short post-event survey (rating + comment), link from confirmation after event. Tests.
 - [x] T7 UI: public list, detail, registration form (mobile-first), confirmation with QR, cancel page, admin panel (activities, duplicate, registrants, waitlist, check-in with camera scan + manual, export, outbox). Component tests.
-- [ ] T8 E2E desktop + mobile: register flow < 1 min, two simultaneous registrations on last seat (two tabs), waitlist promotion, QR single use, duplicate, CSV export.
+- [x] T8 E2E desktop + mobile: register flow < 1 min, two simultaneous registrations on last seat (two tabs), waitlist promotion, QR single use, duplicate, CSV export.
 - [ ] T9 Docs: README (dev, test, deploy Netlify) + GUIA-DE-USO.md (Spanish).
 
 ## Acceptance criteria
@@ -68,6 +68,9 @@ Seats are managed over chat messages: overbooking and people left out without kn
 
 - T6 commit: 6062ecf.
 - T7: component/integration tests written first, RED (10 failed: AppRoutes missing) -> GREEN: 18 files, 88 tests; tsc + lint OK. Extra rule added test-first: registration closed for past/unpublished activities. Seed tests were written alongside the seed code (not strictly RED-first). Cancel page uses a two-step confirm to avoid accidental cancellation.
+
+- T7 commit: c9335ec.
+- T8: Playwright 3 projects x 6 specs = 18 tests; two consecutive full runs 18 passed. E2E found two real mobile CSS bugs (flex on td; overflowing long link) fixed. iPhone 14 profile runs on Chromium (webkit not installed). Last-seat race, cancel->offer (outbox + admin status), single-use QR (manual code), duplicate, CSV all covered; registration flow timing asserted < 60 s.
 
 ## Next step
 Delegate T1–T9 to one writer.

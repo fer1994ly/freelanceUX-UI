@@ -63,7 +63,7 @@ export function RegistrantsTab() {
                 <td>{r.phone}</td>
                 <td>{STATUS[r.status]}</td>
                 <td>{r.checkedInAt ? 'Presente' : '—'}</td>
-                <td className="row">
+                <td><div className="row">
                   {r.status === 'confirmed' ? (
                     <button className="btn small" onClick={() => run(() => app.attendance.toggle(activityId, r.id))}>
                       {r.checkedInAt ? 'Quitar ingreso' : 'Marcar ingreso'}
@@ -75,6 +75,7 @@ export function RegistrantsTab() {
                       Cancelar<span className="sr-only"> {r.name}</span>
                     </button>
                   ) : null}
+                </div>
                 </td>
               </tr>
             ))}

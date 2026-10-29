@@ -89,3 +89,8 @@ th, td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left;
 .stars legend { font-weight: 600; margin-bottom: 8px; }
 .star { display: inline-flex; align-items: center; gap: 6px; min-height: var(--tap); padding: 0 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; }
 .star input { width: 20px; height: 20px; }
+
+.btn { position: relative; white-space: nowrap; }
+th, td { white-space: nowrap; }
+td .row { flex-wrap: nowrap; }
+.card, .notice { overflow-wrap: anywhere; min-width: 0; }
