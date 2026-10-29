@@ -36,7 +36,7 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - [x] T1 Scaffold: Vite React TS, Vitest, Playwright (desktop + mobile projects), ESLint, netlify.toml, folder structure.
 - [x] T2 Activities slice: Activity aggregate, create/list upcoming/get/duplicate use cases, localStorage repo. Unit + integration tests.
 - [x] T3 Registrations slice: register (capacity invariant), waitlist, cancel, promote with 24 h offer, confirm offer, expiry cascade, Notifier outbox, cross-tab lock. Unit + integration tests (incl. concurrent last-seat).
-- [ ] T4 Attendance slice: QR token check-in single-use, manual toggle. Tests.
+- [x] T4 Attendance slice: QR token check-in single-use, manual toggle. Tests.
 - [ ] T5 Reporting: CSV export (registrants, waitlist, attendance). Tests.
 - [ ] T6 Surveys: short post-event survey (rating + comment), link from confirmation after event. Tests.
 - [ ] T7 UI: public list, detail, registration form (mobile-first), confirmation with QR, cancel page, admin panel (activities, duplicate, registrants, waitlist, check-in with camera scan + manual, export, outbox). Component tests.
@@ -59,6 +59,9 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - T2: RED (3 files failed) -> GREEN: 7 files, 24 tests; lint+tsc OK. Repos are async ports; VersionedCollection does optimistic versioning.
 
 - T3: RED (2 files failed to load) -> GREEN. Test found a real bug: BookRepository.save awaited between version check and write (both concurrent writers passed); fixed by synchronous check+write. Final: 9 files, 50 tests pass; lint+tsc OK. Dcbf014 = T2 commit.
+
+- T3 commit: eec3d04.
+- T4: RED (2 files failed to load) -> GREEN: 11 files, 59 tests; lint+tsc OK. Single-use QR, confirmed-only, concurrent double scan yields one success.
 
 ## Next step
 Delegate T1–T9 to one writer.
