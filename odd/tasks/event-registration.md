@@ -1,0 +1,61 @@
+# Feature: event-registration
+
+## Objective
+Self-service registration for workshops/events of a freelance UX/UI studio (Mar del Plata, AR): public listing, 1-minute mobile sign-up, automatic waitlist with 24 h confirmation window, QR check-in, admin panel, CSV export, post-event survey. Deploy on Netlify.
+
+## Problem / Why
+Seats are managed over chat messages: overbooking and people left out without knowing.
+
+## Scope (authorized)
+- Public list of upcoming activities + activity detail page.
+- Registration (name, email, phone, consent) -> on-screen confirmation with QR + cancellation link.
+- Automatic waitlist; when a seat frees, first in line gets a 24 h offer to confirm (lazy expiry on read via Clock port).
+- Cancellation from link (`/cancel/:token`).
+- Admin panel: create & duplicate activities (copy everything except date and registrations), view registrants & waitlist, check-in by QR scan or manual toggle, CSV export (registrants, waitlist, attendance).
+- Short post-event survey.
+- Emails: NOT sent. `Notifier` port + outbox adapter (Kodarvia connects real email later).
+
+## Constraints
+- Persistence: localStorage only (user decision 2026-10-29). Data lives in one browser: public and admin share data only on the same browser. Documented limitation.
+- Concurrency: guarded within one browser across tabs with Web Locks API (`navigator.locks`) + optimistic version check in the repository adapter. Cross-device guarantee requires a shared backend (future Supabase adapter behind the same port).
+- Architecture: DDD vertical slices (`activities`, `registrations`, `attendance`, `surveys`, `reporting`) + `shared` kernel; ports & adapters; SOLID.
+- Stack: Vite + React + TypeScript, React Router, Vitest + Testing Library, Playwright (desktop Chromium + mobile emulation Pixel 7 / iPhone 14).
+- Admin access: simple PIN (`VITE_ADMIN_PIN`), not real security (client-side only). Documented.
+- Code/identifiers/tests in English; UI copy and user guide in neutral Spanish (end users are Spanish speakers).
+- Deploy: Netlify (`netlify.toml`, SPA redirect).
+
+## TDD
+- Mode: ON. Source: user global CLAUDE.md ("Strict TDD Mode: enabled") + user request ("AI TDD").
+- Runner: `npm test` (Vitest) for unit/integration; `npm run test:e2e` (Playwright).
+
+## Delivery
+- Strategy: ask-on-risk. No git remote yet -> no PRs; work-unit commits on `feat/event-registration`.
+- RDD: on (global). Assess after each work-unit commit.
+
+## Tasks
+- [ ] T1 Scaffold: Vite React TS, Vitest, Playwright (desktop + mobile projects), ESLint, netlify.toml, folder structure.
+- [ ] T2 Activities slice: Activity aggregate, create/list upcoming/get/duplicate use cases, localStorage repo. Unit + integration tests.
+- [ ] T3 Registrations slice: register (capacity invariant), waitlist, cancel, promote with 24 h offer, confirm offer, expiry cascade, Notifier outbox, cross-tab lock. Unit + integration tests (incl. concurrent last-seat).
+- [ ] T4 Attendance slice: QR token check-in single-use, manual toggle. Tests.
+- [ ] T5 Reporting: CSV export (registrants, waitlist, attendance). Tests.
+- [ ] T6 Surveys: short post-event survey (rating + comment), link from confirmation after event. Tests.
+- [ ] T7 UI: public list, detail, registration form (mobile-first), confirmation with QR, cancel page, admin panel (activities, duplicate, registrants, waitlist, check-in with camera scan + manual, export, outbox). Component tests.
+- [ ] T8 E2E desktop + mobile: register flow < 1 min, two simultaneous registrations on last seat (two tabs), waitlist promotion, QR single use, duplicate, CSV export.
+- [ ] T9 Docs: README (dev, test, deploy Netlify) + GUIA-DE-USO.md (Spanish).
+
+## Acceptance criteria
+- Capacity never exceeded: two simultaneous registrations on last seat -> exactly one confirmed, one waitlisted.
+- On freed seat, first waitlisted gets notification (outbox) and 24 h to confirm.
+- QR validates at check-in and cannot be used twice.
+- Duplicate copies everything except date and registrations.
+- Export contains registrants, waitlist and attendance.
+- Mobile registration < 1 minute (E2E timing assertion).
+
+## Route declaration
+- T1–T9: delegated direct (writer trigger: 2+ non-trivial files; one writer).
+
+## Progress / Evidence
+_(updated per task)_
+
+## Next step
+Delegate T1–T9 to one writer.
