@@ -77,3 +77,18 @@ Seats are managed over chat messages: overbooking and people left out without kn
 
 ## Next step
 User review; decide on push/PR (no remote configured). Assess review risk per work-unit commit if RDD is on.
+
+## Native review (RDD)
+Full branch (8133 lines) exceeded the reviewer context budget, so it was reviewed in three committed slices. Each slice was medium risk; consent was granted, the review-reliability lens ran, and the result was approved and acknowledged (authority burned).
+- S1 `acbfd84..9c9a113` (scaffold): approved. Lineage review-6d328fc5f3a78f04.
+- S2 `9c9a113..6062ecf` (domain slices): approved. Lineage review-5a88b77fa832b593.
+- S3 `6062ecf..c25fd61` (UI, E2E, docs): approved. Lineage review-7a33a7980618c0f5.
+
+### Advisory follow-ups (non-blocking)
+- [ ] F1 (WARNING) Camera scanner re-fires check-in on every frame, so a valid first scan shows "ya fue utilizado". Add an in-flight guard and last-token dedupe (`src/app/admin/CheckInTab.tsx`).
+- [ ] F2 (WARNING) The notifier failing after save surfaces an error even though the registration persisted (`registrationService.ts` publish-after-save).
+- [ ] F3 (WARNING) CSV export has no error handling and fails silently (`RegistrantsTab.tsx`).
+- [ ] F4 (WARNING) BrowserLockManager is untested (navigator.locks path and fallback); there is no test for different keys running concurrently.
+- [ ] F5 (SUGGESTION) The registration_closed check runs outside the lock; re-check it inside the mutation.
+- [ ] F6 (SUGGESTION) Only one retry on ConcurrencyError; readJson does not fall back on a stored null; vi.unstubAllGlobals belongs in afterEach; message bodies are untested (the QR text points at the cancel path?); an unhandled seed rejection; the form shows nothing when the registration view is missing.
+- Resolved in S3: S2 finding "register accepts cancelled/draft/past activities" (registration_closed guard added).
