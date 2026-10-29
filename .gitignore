@@ -8,3 +8,6 @@ playwright-report
 
 # Gentle AI local skill registry
 .atl/
+
+# Local Netlify folder
+.netlify
