@@ -32,3 +32,10 @@ export class BrowserLockManager implements LockManager {
     return locks.request(`er:${key}`, { mode: 'exclusive' }, fn) as Promise<T>
   }
 }
+
+/** No mutual exclusion. Only for tests that exercise the optimistic-version fallback. */
+export class NoLockManager implements LockManager {
+  withLock<T>(_key: string, fn: () => Promise<T>): Promise<T> {
+    return fn()
+  }
+}
