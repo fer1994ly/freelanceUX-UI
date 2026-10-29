@@ -39,8 +39,13 @@ export function RegistrantsTab() {
   }
 
   async function exportCsv() {
-    const { filename, content } = await app.reports.exportCsv(activityId)
-    downloadText(filename, content)
+    try {
+      setError('')
+      const { filename, content } = await app.reports.exportCsv(activityId)
+      downloadText(filename, content)
+    } catch {
+      setError('No se pudo exportar el CSV. Intenta de nuevo.')
+    }
   }
 
   return (
