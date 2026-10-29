@@ -47,11 +47,21 @@ export function waitlistPosition(book: RegistrationBook, registrationId: string)
   return idx === -1 ? null : idx + 1
 }
 
+export type RegistrantField = 'name' | 'email' | 'phone' | 'consent'
+
+/** Field-level validation: maps each invalid field to its error code. */
+export function registrantErrors(input: RegistrantInput): Partial<Record<RegistrantField, string>> {
+  const errors: Partial<Record<RegistrantField, string>> = {}
+  if (!input.name.trim()) errors.name = 'name_required'
+  if (!EMAIL_RE.test(input.email.trim())) errors.email = 'email_invalid'
+  if (input.phone.replace(/\D/g, '').length < 6) errors.phone = 'phone_invalid'
+  if (input.consent !== true) errors.consent = 'consent_required'
+  return errors
+}
+
 export function validateRegistrant(input: RegistrantInput): void {
-  if (!input.name.trim()) throw new DomainError('name_required')
-  if (!EMAIL_RE.test(input.email.trim())) throw new DomainError('email_invalid')
-  if (input.phone.replace(/\D/g, '').length < 6) throw new DomainError('phone_invalid')
-  if (input.consent !== true) throw new DomainError('consent_required')
+  const first = Object.values(registrantErrors(input))[0]
+  if (first) throw new DomainError(first)
 }
 
 const normalizeEmail = (e: string) => e.trim().toLowerCase()

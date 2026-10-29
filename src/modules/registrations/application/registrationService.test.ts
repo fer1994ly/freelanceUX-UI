@@ -103,3 +103,15 @@ describe('RegistrationService', () => {
     expect(await h.registrations.findByCancelToken('missing')).toBeUndefined()
   })
 })
+
+describe('RegistrationService registration window', () => {
+  it('refuses registrations for past or unpublished activities', async () => {
+    const h = makeHarness()
+    const a = await h.createActivity(2)
+    h.clock.set('2026-12-02T00:00:00.000Z')
+    await expect(h.registrations.register(a.id, person(1))).rejects.toThrow(/registration_closed/)
+    h.clock.set('2026-11-01T10:00:00.000Z')
+    await h.activities.update(a.id, { status: 'cancelled' })
+    await expect(h.registrations.register(a.id, person(1))).rejects.toThrow(/registration_closed/)
+  })
+})

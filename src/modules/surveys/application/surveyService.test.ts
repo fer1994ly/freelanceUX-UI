@@ -41,10 +41,10 @@ describe('SurveyService', () => {
 
   it('rejects unknown tokens and non-confirmed registrations', async () => {
     const { h, svc, a } = await setup()
-    h.clock.set('2026-12-02T10:00:00.000Z')
-    await expect(svc.submit('nope', { rating: 3, comment: '' })).rejects.toThrow(/survey_not_found/)
     const w = await h.registrations.register(a.id, person(2))
     const x = await h.registrations.register(a.id, person(3))
+    h.clock.set('2026-12-02T10:00:00.000Z')
+    await expect(svc.submit('nope', { rating: 3, comment: '' })).rejects.toThrow(/survey_not_found/)
     await expect(svc.submit(x.registration.surveyToken, { rating: 3, comment: '' })).rejects.toThrow(/not_confirmed/)
     expect(w.registration.status).toBe('confirmed')
   })

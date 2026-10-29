@@ -2,7 +2,7 @@ import type { Clock } from '../../../shared/clock'
 import { ConcurrencyError, DomainError } from '../../../shared/errors'
 import type { IdGenerator } from '../../../shared/ids'
 import type { LockManager } from '../../../shared/lock'
-import type { Activity } from '../../activities/domain/activity'
+import { isUpcoming, type Activity } from '../../activities/domain/activity'
 import type { ActivityRepository } from '../../activities/application/ports'
 import {
   cancelInBook,
@@ -54,6 +54,9 @@ export class RegistrationService {
     activityId: string,
     input: RegistrantInput,
   ): Promise<{ registration: Registration; position: number | null }> {
+    const activity = await this.d.activities.get(activityId)
+    if (!activity) throw new DomainError('activity_not_found')
+    if (!isUpcoming(activity, this.d.clock.now())) throw new DomainError('registration_closed')
     return this.mutate(activityId, (book, ctx) => {
       const out = registerInBook(book, input, ctx)
       return {
