@@ -37,8 +37,8 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - [x] T2 Activities slice: Activity aggregate, create/list upcoming/get/duplicate use cases, localStorage repo. Unit + integration tests.
 - [x] T3 Registrations slice: register (capacity invariant), waitlist, cancel, promote with 24 h offer, confirm offer, expiry cascade, Notifier outbox, cross-tab lock. Unit + integration tests (incl. concurrent last-seat).
 - [x] T4 Attendance slice: QR token check-in single-use, manual toggle. Tests.
-- [ ] T5 Reporting: CSV export (registrants, waitlist, attendance). Tests.
-- [ ] T6 Surveys: short post-event survey (rating + comment), link from confirmation after event. Tests.
+- [x] T5 Reporting: CSV export (registrants, waitlist, attendance). Tests.
+- [x] T6 Surveys: short post-event survey (rating + comment), link from confirmation after event. Tests.
 - [ ] T7 UI: public list, detail, registration form (mobile-first), confirmation with QR, cancel page, admin panel (activities, duplicate, registrants, waitlist, check-in with camera scan + manual, export, outbox). Component tests.
 - [ ] T8 E2E desktop + mobile: register flow < 1 min, two simultaneous registrations on last seat (two tabs), waitlist promotion, QR single use, duplicate, CSV export.
 - [ ] T9 Docs: README (dev, test, deploy Netlify) + GUIA-DE-USO.md (Spanish).
@@ -62,6 +62,9 @@ Seats are managed over chat messages: overbooking and people left out without kn
 
 - T3 commit: eec3d04.
 - T4: RED (2 files failed to load) -> GREEN: 11 files, 59 tests; lint+tsc OK. Single-use QR, confirmed-only, concurrent double scan yields one success.
+
+- T4 commit: 7d4a518. T5 commit: 2c6fb01 (RED 2 files failed -> GREEN, 64 tests).
+- T6: RED (2 files failed) -> GREEN: 15 files, 75 tests; lint+tsc OK. Survey id = registration id so a duplicate answer is rejected atomically. Survey requires a confirmed registration and activity date reached (check-in not required).
 
 ## Next step
 Delegate T1–T9 to one writer.
