@@ -41,7 +41,7 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - [x] T6 Surveys: short post-event survey (rating + comment), link from confirmation after event. Tests.
 - [x] T7 UI: public list, detail, registration form (mobile-first), confirmation with QR, cancel page, admin panel (activities, duplicate, registrants, waitlist, check-in with camera scan + manual, export, outbox). Component tests.
 - [x] T8 E2E desktop + mobile: register flow < 1 min, two simultaneous registrations on last seat (two tabs), waitlist promotion, QR single use, duplicate, CSV export.
-- [ ] T9 Docs: README (dev, test, deploy Netlify) + GUIA-DE-USO.md (Spanish).
+- [x] T9 Docs: README (dev, test, deploy Netlify) + GUIA-DE-USO.md (Spanish).
 
 ## Acceptance criteria
 - Capacity never exceeded: two simultaneous registrations on last seat -> exactly one confirmed, one waitlisted.
@@ -72,5 +72,8 @@ Seats are managed over chat messages: overbooking and people left out without kn
 - T7 commit: c9335ec.
 - T8: Playwright 3 projects x 6 specs = 18 tests; two consecutive full runs 18 passed. E2E found two real mobile CSS bugs (flex on td; overflowing long link) fixed. iPhone 14 profile runs on Chromium (webkit not installed). Last-seat race, cancel->offer (outbox + admin status), single-use QR (manual code), duplicate, CSV all covered; registration flow timing asserted < 60 s.
 
+- T8 commit: bee8000.
+- T9: README.md + docs/GUIA-DE-USO.md written. Final verification: lint OK, tsc OK, npm test 18 files / 88 tests pass, build OK, test:e2e 18 passed.
+
 ## Next step
-Delegate T1–T9 to one writer.
+User review; decide on push/PR (no remote configured). Assess review risk per work-unit commit if RDD is on.
